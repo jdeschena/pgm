@@ -1,0 +1,13 @@
+# Important note: the json with the results will be saved in ./outputs/lm1b/pgm_6_6_mean/val_ppl/last_ckpt.json since hydra changes the cwd
+python -u -m main \
+    mode=ppl_eval \
+    eval.checkpoint_path=PATH-TO-YOUR-CHECKPOINT \
+    data=lm1b  \
+    data.cache_dir=YOUR-LOCAL-CACHE-PATH \
+    model=small-encoder-decoder \
+    model.length=128 \
+    model.swap.pre_query_mode=learn+freqs+mean \
+    algo=partition-mdlm \
+    loader.eval_batch_size=32 \
+    hydra.run.dir=./outputs/lm1b/pgm_6_6_mean \
+    eval.results_json_path="val_ppl/last_ckpt.json"

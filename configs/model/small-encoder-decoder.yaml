@@ -1,0 +1,22 @@
+name: small
+type: encoder-decoder
+hidden_size: 768
+cond_dim: 128
+length: 1024
+n_heads: 12
+mlp_ratio: 4
+scale_by_sigma: True
+dropout: 0.1
+tie_word_embeddings: False
+
+encoder:
+  n_blocks: 6
+
+swap:
+  # learn / learn+freqs / learn+freqs+mean / learn+freqs+logsumexp
+  pre_query_mode: learn+freqs
+  query_process_mode: linear  # linear / mlp4
+  normalize_mode: layernorm  # layernorm / rmsnorm
+
+decoder:
+  n_blocks: 6

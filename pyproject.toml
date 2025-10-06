@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pgm_text"
+version = "0.0.1"
+description = "Installable packaging for the PGM release repo on text"
+requires-python = ">=3.8"
+
+
+[tool.setuptools]
+package-dir = {pgm_text = "."}
