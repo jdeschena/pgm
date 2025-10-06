@@ -1,0 +1,31 @@
+name: ar
+
+
+
+sampling:
+  top_p: 0.0
+  top_k: 0.0
+  temperature: 1.0
+  sample: True
+
+  num_samples: 1024
+  batch_size: 32
+  # If true, sample a random token to start the sentence, instead of injecting BOS
+  random_start: True
+
+
+  uncond:
+    run: False
+    # Shared
+    seq_len: 1024
+
+
+  cond_prefix:
+    run: False
+
+    dataset: webtext
+    seq_len: 100
+    prefix_len: 50
+    num_cont_per_prefix: 5
+    min_seq_len: 1024
+    add_bos: True

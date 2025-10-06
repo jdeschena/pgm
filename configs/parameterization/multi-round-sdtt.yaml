@@ -1,0 +1,56 @@
+name: multi-round-sdtt
+log_loss_buckets: -1
+
+checkpoint_path: 'kuleshov-group/mdlm-owt'
+start_from_hf: True
+
+# distillation mode: mse / tvd / kl-fwd / kl-bwd
+distill_mode: kl-bwd
+num_distill_steps: 2
+min_num_sampling_steps: 8
+grow_dt_every: 10_000
+
+orig_num_sampling_steps: 1024
+sampling_mode: ancestral
+loss_precision: null
+
+
+reset_optimizer_on_growth: False
+use_ema_on_growth: False
+
+sampling:
+  precision: null
+  uncond:
+    run: False
+    # Shared
+    num_samples: 1024
+    batch_size: 32
+    from_ema: True
+
+    # Passed to `sample`
+    #n_samples: ${..batch_size}
+    num_steps: 1024
+    seq_len: 1024
+    sampler: ancestral
+    cache_preds: False
+    add_bos: False
+    add_eos: False
+
+  cond_prefix:
+    run: False
+    # Shared
+    num_samples: 1024
+    batch_size: 32
+    from_ema: True
+
+    dataset: webtext
+    seq_len: 100
+    prefix_len: 50
+    num_cont_per_prefix: 5
+    min_seq_len: 1024
+
+    num_steps: 1024
+    sampler: ancestral
+    cache_preds: False
+    add_bos: False
+    add_eos: False

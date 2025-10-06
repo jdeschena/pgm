@@ -1,0 +1,2 @@
+text_throughput:
+  _target_: callbacks.text_throughput.TextThroughputMonitor

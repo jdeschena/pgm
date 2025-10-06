@@ -3,11 +3,12 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pgm_text"
+name = "pgm_distill"
 version = "0.0.1"
-description = "Installable packaging for the PGM release repo on text"
+description = "Installable packaging for the PGM release repo"
 requires-python = ">=3.8"
 
 
 [tool.setuptools]
-package-dir = {pgm_text = "."}
+package-dir = {pgm_distill = "."}
+

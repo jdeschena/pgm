@@ -1,8 +1,0 @@
-train: openwebtext
-valid: wikitext103
-tokenizer_name_or_path: gpt2
-cache_dir: /tmp/data
-wrap: True
-streaming: True
-insert_train_eos: True
-insert_valid_eos: True

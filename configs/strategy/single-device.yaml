@@ -1,2 +1,0 @@
-_target_: lightning.pytorch.strategies.SingleDeviceStrategy
-device: cuda:0

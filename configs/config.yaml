@@ -1,70 +1,64 @@
 defaults:
   - _self_
-  - /callbacks: [checkpoint_every_n_steps, checkpoint_monitor, learning_rate_monitor]
-  - /data: openwebtext
-  - /model: small
+  - /callbacks:
+      [
+        checkpoint_every_n_steps,
+        learning_rate_monitor,
+        text_throughput,
+        grad_norm,
+      ]
+  - /data: openwebtext-split
+  - /model: dit-orig-small
   - /strategy: ddp
-  - /noise: log-linear
+  - /noise: loglinear
   - /lr_scheduler: constant_warmup
-  - /prior: none
-  - /algo: mdlm
+  # distill-mdlm / ar
+  - /parameterization: multi-round-sdtt
 
-mode: train  # train / ppl_eval / sample_eval / latency_train / latency_sample
+mode: train # train /sample / eval
+time_conditioning: False
+# T: 0 -> continuous time
+# T > 0 -> number of diffusion steps, eg 1000
+T: 0
+compile: False
+# Set here, so that it scales with number of accum. steps (more accum -> less freq eval)
+eval_every: 5_000
 
-seed: 1
-
-neg_infinity_mode: large-finite  # large-finite / true-inf / value-{float} <- value after '-' is cast to a float, negated and used
-
-latency_train:
-  num_warmup: 10
-  num_timings: 100
-  save_name: default.json
+data_preprocess:
+  data_cache: REDACTED
+  min_seq_len: -1
+  # Model's context length
+  seq_len: ${model.length}
+  group_text: true
+  remove_text: true
+  num_seqs: -1
+  add_bos: False
+  add_eos: True
+  legacy_start_end_bos: True
 
 loader:
-  global_batch_size: 512
+  global_batch_size: 32
   eval_global_batch_size: ${.global_batch_size}
   # Note: batch_size and eval_batch_size are **per machine**
   batch_size: ${div_up:${.global_batch_size}, ${eval:${trainer.devices} * ${trainer.num_nodes}}}
   eval_batch_size: ${div_up:${.eval_global_batch_size}, ${eval:${trainer.devices} * ${trainer.num_nodes}}}
-  num_workers: 12
+  num_workers: 32
   pin_memory: True
-
-sampling:
-  predictor: ddpm_cache  # analytic, ddpm, ddpm_cache
-  steps: 1024
-  noise_removal: 'ancestral'  # 'ancestral', 'greedy', 'none'
-  use_float64: True
-  p_nucleus: 1.0
-  num_sample_batches: 2  # Total samples: `num_gpus` * `loader.eval_batch_size` * num_sample_batches
-  num_sample_log: 2
-  semi_ar: False
-  stride_length: 1
-  num_strides: 1
-  inject_bos: True
+  persistent_workers: True
 
 training:
   ema: 0.9999
   antithetic_sampling: True
   importance_sampling: False
-  sampling_eps: 1e-3
+  sampling_eps: 1e-5
   change_of_variables: False
-  loss_precision: 'bf16'  # bf16, float32, float64
-  finetune_path: ''
 
-eval:
-  checkpoint_path: ''  # Used to evaluate a checkpoint after training.
-  disable_ema: False
-  compute_generative_perplexity: False
-  perplexity_batch_size: 8
-  compute_perplexity_on_sanity: False
-  gen_ppl_eval_model_name_or_path: gpt2-large  # gpt2-large, meta-llama/Llama-2-7b-hf
-  generate_samples: True
-  generated_samples_path: ${cwd:}/samples.json
-  results_json_path: null
-  npz_path: null
+tokenizer:
+  name: gpt2
 
 optim:
-  weight_decay: 0
+  name: adamw
+  weight_decay: 0.0
   lr: 3e-4
   beta1: 0.9
   beta2: 0.999
@@ -74,30 +68,30 @@ trainer:
   _target_: lightning.Trainer
   accelerator: cuda
   num_nodes: 1
-  devices: ${device_count:}
+  devices: 1
   accumulate_grad_batches: ${div_up:${loader.global_batch_size}, ${eval:${trainer.devices} * ${loader.batch_size} * ${trainer.num_nodes}}}
   gradient_clip_val: 1.0
-  precision: 'bf16'
+  precision: "32-true"
   num_sanity_val_steps: 2
   max_steps: 1_000_000
-  log_every_n_steps: 100
-  limit_train_batches: 1.0   # train on full dataset, can be used to toggle quick run
-  limit_val_batches: 1.0     # validate on full dataset, can be used to toggle quick run
-  val_check_interval: 5000
-  check_val_every_n_epoch: null
+  log_every_n_steps: 10
+  limit_train_batches: 1.0 # train on full dataset, can be used to toggle quick run
+  limit_val_batches: 1.0 # validate on full dataset, can be used to toggle quick run
+  # Eval every `eval_every` gradient steps, correctly account for gradient accumulations
+  val_check_interval: ${eval:${trainer.accumulate_grad_batches} * ${eval_every}}
+  check_val_every_n_epoch: null # Ensure that we do eval every val_check_interval batch (if not set, will reject if an epoch has less steps)
+  benchmark: true
 
 wandb:
-  project: partition-generative-modeling
-  notes: null
+  project: text-diffusion
+  notes: ""
   group: null
   job_type: null
   name: null
-  id: null 
   tags:
     - ${noise.type}
     - ${data.train}
     - ${data.valid}
-    - ${algo.name}
 
 hydra:
   run:
@@ -111,3 +105,28 @@ checkpointing:
   # Note: `checkpoints` path should correspond to `checkpoint_every_n_steps.dirpath`
   resume_from_ckpt: true
   resume_ckpt_path: ${.save_dir}/checkpoints/last.ckpt
+
+eval:
+  valid:
+    n_samples: 16
+    num_steps: 128
+
+  ppl_with_ar:
+    run: True
+    model: gpt2-large
+    batch_size: 8
+
+  mauve:
+    run: False
+    num_rounds: 5
+    max_num_tokens: 100
+    batch_size: 8
+    scaling_factor: 5
+
+  lambada_openai:
+    run: False
+    batch_size: 32
+    num_samples: 32
+    from_ema: True
+    add_bos: True
+    add_eos: True
