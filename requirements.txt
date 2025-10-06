@@ -1,0 +1,64 @@
+# Generic
+hydra-core
+tqdm
+black
+termcolor
+seaborn
+blobfile
+SciencePlots
+fsspec
+git-lfs
+jinja2
+pyyaml
+magic-wormhole  # secure & fast copy between machines
+torchmetrics
+jsonargparse[signatures]
+clip
+
+# ML
+einops
+fancy-einsum
+#numpy  # is already installed in the container. Re-installing causes problems
+mauve-text
+git+https://github.com/EleutherAI/lm-evaluation-harness
+sentencepiece
+lightning
+pandas==2.2.1
+scikit-learn==1.4.0
+timm
+jupyter
+ocifs
+pytorch-fid
+torch-fidelity
+calflops
+tiktoken
+clean-fid
+opencv-python==4.8.0.74
+pillow
+webdataset
+vendi_score
+
+# Huggingface
+huggingface-hub
+safetensors
+tokenizers
+evaluate
+datasets>=3.3.0
+transformers==4.45
+accelerate
+diffuser
+
+# Monitoring / configuration
+tensorboard
+wandb
+omegaconf
+gpustat
+nvitop
+packaging
+rich
+loguru
+
+
+# From subham's requirements
+ocifs
+hf_transfer
