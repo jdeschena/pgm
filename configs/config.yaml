@@ -1,0 +1,110 @@
+
+data_folder: "[path to PREPROCESSED data]"
+eval_folder: "[path to PREPROCESSED data]"
+saved_folder: "saved_networks/maskgit/"
+writer_log: "logs/imagenet-feat-256-ds-8"
+wandb_project: "maskgit"
+disable_wandb: False
+run_name: "debug" 
+vqgan_folder: "saved_networks/vq_ds8_c2i.pt"
+
+data: "imagenet_feat"
+device: "cuda:0"
+seed: -1
+mode: "cls-to-img"   
+debug: false
+resume: true
+test_only: false
+use_ema: false
+resume_checkpoint: null
+scores_save_path: null
+
+# Model size and compute FLOP
+vit_size: "large"
+img_size: 256
+f_factor: 8
+codebook_size: 16384
+mask_value: ${codebook_size}
+bos_value : null
+register: 0
+proj: 1
+dtype: "bfloat16"
+
+# Dataloader
+num_workers: 8
+global_bsize: 16
+gradacc: 1
+nb_class: 1000
+
+# Learning hyper-parameter
+max_iter: 1000000
+log_iter: 2500
+warm_up: 2500
+lr: 1e-4
+grad_clip: 1
+sched_mode: "arccos"
+dropout: 0.1
+epoch: 10_000
+drop_label: 0.1
+grad_cum: 1
+
+# sampling
+sampler: "confidence"
+sm_temp: 1.0
+cfg_w: 0            # (visualization or test-only)
+step: 32
+randomize: false
+
+# halton scheduler only
+sched_pow: 2
+top_k: -1
+temp_warmup: 1
+sm_temp_min: 1.
+
+# Confidence Sampler only
+r_temp: 5
+compile: true
+
+model:
+  name: maskgit # encoder-decoder / maskgit
+  type: encoder-decoder
+  length: 1025
+  cond_dim: 128
+  hidden_size: 1024
+  n_heads: 16
+  mlp_ratio: 4
+  scale_by_sigma: True
+  dropout: 0.1
+  tie_word_embeddings: False
+  n_class: 1000
+
+  encoder:
+    n_blocks: 12
+
+  swap:
+    pre_query_mode: learn+freqs # learn / learn+freqs / learn+freqs+mean / learn+freqs+logsumexp
+    query_process_mode: linear  # linear / mlp4
+    normalize_mode: layernorm  # layernorm / rmsnorm
+
+  decoder:
+    n_blocks: 12
+    mode: cross-only # interleave / interleave-k-cross / interleave-k-self / k-cross-first / cross-only
+    self_attn_first: False
+    
+# for enconder-decoder
+sampling:
+  inject_bos: True
+  use_float64: True
+algo:
+  name: partition-mdlm
+  backbone: encoder-decoder  # dit / dimamba / hf_dit
+  parameterization: subs
+  time_conditioning: False
+  T: 0  # 0 (continuous time) / 1000 
+  subs_masking: False
+  causal_attention: False
+  ignore_bos: False
+  loss_type: elbo  # elbo, low_var
+  sampling_mode: naive  # naive / efficient-uniform / efficient-non-uniform
+  post_process_mode: efficient+fp64  # orig / fp64 / efficient / efficient+fp64
+  prevent_full_partition: False

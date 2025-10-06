@@ -1,64 +1,42 @@
 # Generic
-hydra-core
-tqdm
-black
-termcolor
-seaborn
-blobfile
-SciencePlots
+hydra-core==1.3.2
+tqdm==4.67.1
+black==25.1.0
+termcolor==3.0.1
+seaborn==0.13.2
+blobfile==3.0.0
 fsspec
-git-lfs
-jinja2
-pyyaml
-magic-wormhole  # secure & fast copy between machines
-torchmetrics
-jsonargparse[signatures]
-clip
+git-lfs==1.6
+jinja2==3.1.5
+pyyaml==6.0.2
+torchmetrics==1.7.1
 
 # ML
-einops
-fancy-einsum
-#numpy  # is already installed in the container. Re-installing causes problems
-mauve-text
+torch==2.7.0
+einops==0.8.1
+fancy-einsum==0.0.3
+numpy==1.26.4
+mauve-text==0.4.0
 git+https://github.com/EleutherAI/lm-evaluation-harness
-sentencepiece
-lightning
+sentencepiece==0.2.0
+lightning==2.5.1
 pandas==2.2.1
 scikit-learn==1.4.0
-timm
-jupyter
-ocifs
-pytorch-fid
-torch-fidelity
-calflops
-tiktoken
-clean-fid
-opencv-python==4.8.0.74
-pillow
-webdataset
-vendi_score
+timm==1.0.15
+jupyter==1.1.1
+ocifs==1.3.2
 
 # Huggingface
-huggingface-hub
-safetensors
-tokenizers
-evaluate
-datasets>=3.3.0
-transformers==4.45
-accelerate
-diffuser
+huggingface-hub==0.30.2
+safetensors==0.5.2
+tokenizers==0.20.3
+evaluate==0.4.3
+datasets==3.5.0
+transformers==4.45.0
+accelerate==1.6.0
 
 # Monitoring / configuration
-tensorboard
-wandb
-omegaconf
-gpustat
-nvitop
-packaging
-rich
-loguru
-
-
-# From subham's requirements
-ocifs
-hf_transfer
+tensorboard==2.16.2
+wandb==0.19.9
+omegaconf==2.3.0
+rich==13.9.4
