@@ -314,7 +314,7 @@ class Trainer(object):
             num_images   -> int: The number of images to evaluate.
             save_exemple -> bool: Whether to save example images.
             compute_pr   -> bool: Whether to compute precision and recall.
-            split        -> str: The dataset split to evaluate on ("Train" or "Test").
+            split        -> str: The dataset split to evaluate on ("train" or "test").
             mode         -> str: The mode of evaluation ("c2i" for code to image).
             data         -> str: The dataset on which to test
         Returns:

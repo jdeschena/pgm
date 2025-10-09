@@ -148,9 +148,7 @@ class MaskGIT(Trainer):
                 if not os.path.exists(self.args.saved_folder):
                     os.makedirs(self.args.saved_folder)
                     print(f"Folder created: {self.args.saved_folder}")
-
-            config = omegaconf.OmegaConf.create(vars(self.args)['_content'])
-            model = encoder_decoder.PartitionDIT(config, vocab_size=self.args.codebook_size + 2)
+            model = encoder_decoder.PartitionDIT(self.args, vocab_size=self.args.codebook_size + 2)
             
             # Load model checkpoint if resuming training
             if not self.args.resume_checkpoint:

@@ -15,6 +15,7 @@ mode: "cls-to-img"
 debug: false
 resume: true
 test_only: false
+sample_speed: false
 use_ema: false
 resume_checkpoint: null
 scores_save_path: null

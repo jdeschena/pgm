@@ -10,6 +10,7 @@ torch.set_float32_matmul_precision("high")
 from torch.distributed import init_process_group, destroy_process_group
 import hydra
 from omegaconf import DictConfig, OmegaConf
+import time
 
 
 def ddp_setup():
@@ -34,6 +35,37 @@ def launch_multi_train(args):
     train(args)
     destroy_process_group()
 
+def sample_speed(args, maskgit):
+    sampler = maskgit.sampler
+
+    # sample with batch size = 1 for latency
+    timings = []
+    for _ in range(12):
+        torch.cuda.synchronize()
+        start = time.perf_counter()
+        _ = sampler(maskgit, nb_sample=1)
+        torch.cuda.synchronize()
+        end = time.perf_counter()
+        timings.append(end - start)
+    
+    timings = timings[2:]
+    latency = np.mean(timings)
+
+    # Sample with batch size = 32 for 
+    timings = []
+    for _ in range(12):
+        torch.cuda.synchronize()
+        start = time.perf_counter()
+        sampler(maskgit, nb_sample=32)
+        torch.cuda.synchronize()
+        end = time.perf_counter()
+        timings.append(end - start)
+    
+    timings = timings[2:]
+    throughput = 32 / np.mean(timings)  # images/sec
+    return dict(latency=latency, throughput=throughput)
+
+
 def train(args):
     """ Main function: Train or eval MaskGIT """
     if args.mode == "cls-to-img":
@@ -43,11 +75,14 @@ def train(args):
     else:
         raise "What is this mode ?????"
     maskgit = MaskGIT(args)
-    
-    if args.test_only:
+
+    if args.sample_speed:
+        results = sample_speed(args, maskgit)
+        print(results)
+    elif args.test_only:
         eval_sampler = maskgit.sampler
         maskgit.eval(sampler=eval_sampler, num_images=50_000, save_exemple=True, compute_pr=False,
-                     split="Test", mode="c2i", data=args.data.split("_")[0])
+                     split="test", mode="c2i", data=args.data.split("_")[0])
     else:
         maskgit.fit()
 
@@ -56,8 +91,8 @@ def train(args):
 @hydra.main(config_path="configs/", config_name="config", version_base=None)
 def main(cfg: DictConfig):
     args = OmegaConf.to_container(cfg, resolve=True)
-    args = argparse.Namespace(**args)
-    args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args = OmegaConf.create(args)
+    args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
     args.iter = 0
     args.global_epoch = 0
  
