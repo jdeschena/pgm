@@ -38,8 +38,6 @@ class HaltonSampler(object):
         self.top_k = top_k
         self.basic_halton_mask = None  # Placeholder for the Halton-based mask
         self.temp_warmup = temp_warmup
-        # Linearly interpolate the temperature over the sampling steps
-        self.temperature = torch.linspace(self.sm_temp_min, self.sm_temp_max, self.step)
 
     def __str__(self):
         """Returns a string representation of the sampler configuration."""
@@ -93,6 +91,7 @@ class HaltonSampler(object):
                 halton_mask = self.basic_halton_mask.clone().unsqueeze(0).expand(nb_sample, trainer.input_size ** 2, 2)
 
             # Softmax temperature
+            temperature = torch.linspace(self.sm_temp_min, self.sm_temp_max, self.step)
             bar = tqdm(range(self.step), leave=False) if verbose else range(self.step)
             for index in bar:
                 # Compute the number of tokens to predict
@@ -109,7 +108,7 @@ class HaltonSampler(object):
                 mask = mask.bool()
 
                 # Choose softmax temperature
-                _temp = self.temperature[index] ** self.temp_pow
+                _temp = temperature[index] ** self.temp_pow
                 if index < self.temp_warmup:
                     _temp *= 0.5  # Reduce temperature during warmup
 

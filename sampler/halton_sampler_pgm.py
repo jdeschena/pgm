@@ -38,8 +38,6 @@ class HaltonSamplerPGM(object):
         self.top_k = top_k
         self.basic_halton_mask = None  # Placeholder for the Halton-based mask
         self.temp_warmup = temp_warmup
-        # Linearly interpolate the temperature over the sampling steps
-        self.temperature = torch.linspace(self.sm_temp_min, self.sm_temp_max, self.step)
 
     def __str__(self):
         """Returns a string representation of the sampler configuration."""
@@ -93,6 +91,7 @@ class HaltonSamplerPGM(object):
             noisy_positions = noisy_positions.to(trainer.args.device)
             bar = tqdm(range(self.step), leave=False) if verbose else range(self.step)
             r_prev = 0
+            temperature = torch.linspace(self.sm_temp_min, self.sm_temp_max, self.step)
             for index in bar:
                 # Compute the number of tokens to predict
                 ratio = ((index + 1) / self.step)
@@ -126,7 +125,7 @@ class HaltonSamplerPGM(object):
                                 noisy_positions=noisy_pos_to_input, 
                                 concrete_lengths=concrete_lengths, 
                                 use_inference_mode=True)
-                _temp = self.temperature[index] ** self.temp_pow
+                _temp = temperature[index] ** self.temp_pow
                 if index < self.temp_warmup:
                     _temp *= 0.5  # Reduce temperature during warmup
                 
