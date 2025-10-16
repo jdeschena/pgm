@@ -1,8 +1,5 @@
 # Partition Generative Modeling - Pre-training on image
-For our image modeling experiments, we use a modified version of the [Halton MaskGIT](valeoai/Halton-MaskGIT) codebase. Notably, while the original implementation evaluates FID and IS using the validation set, we follow the more common practice of computing FID on a random subset of the training set. For the requirements, see the main branch.
-
-
-Additionally, we recommend against pre-computing features for FID evaluation. For a fair comparison, FID should be calculated between real and generated images from the same class, rather than from random samples. For example, if you generate many images of fish but there are no fish in the real image set, the resulting FID will not be meaningful. Therefore, when computing FID, it is important to generate the same number of images per class as in the real dataset. Our code takes care of this detail.
+For our image modeling experiments, we use a modified version of the [Halton MaskGIT](valeoai/Halton-MaskGIT) codebase. For the requirements, see the main branch.
 
 
 ## Structure of the repo
@@ -46,7 +43,7 @@ On a single NVIDIA A100-80GB, the largest power-of-two that can be used as a bat
 The training scripts are located in `scripts/train`. We use a Slurm cluster with Pyxis to submit jobs using a Docker container (more details can be found in the main branch). Since you likely have a different environment, we also provide scripts that can run in a plain Python environment (look for files with the suffix `-one-node-no-slurm.sh`) on a single node. For details on running in multi-node settings without Slurm, please refer to the [original repository](https://github.com/valeoai/Halton-MaskGIT).
 
 ## Sampling
-We evaluate the Fréchet Inception Distance (FID) and Inception Score (IS) by comparing 50k generated samples against 50k samples from the training set. The scripts to compute the FID and IS are located in `scripts/eval`.
+We evaluate the Fréchet Inception Distance (FID) and Inception Score (IS) by comparing 50k generated samples against 50k samples from the validation set. The scripts to compute the FID and IS are located in `scripts/eval`.
 
 ## Acknowledgement
 - This branch builds upon the [HaltonMaskGIT repo](https://github.com/valeoai/Halton-MaskGIT). We are grateful to their authors.
