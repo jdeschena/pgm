@@ -10,7 +10,7 @@ By [Justin Deschenaux](https://jdeschena.github.io), [Lan Tran](https://github.c
 **TL;DR: Partition Generative Models (PGMs) speed up parallel generation by partitioning tokens and using sparse attention instead of masking.**
 
 <div align="center">
-  <img src="https://jdeschena.github.io/pgm/static/images/pgm_vs_mgm.jpg" width="60%">
+  <img src="https://jdeschena.github.io/pgm/static/images/pgm_vs_mgm.jpg" width="100%">
 </div>
 
 ## Try Our Models
