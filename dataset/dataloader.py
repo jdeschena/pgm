@@ -9,7 +9,8 @@ from torchvision.datasets.coco import CocoCaptions
 from dataset.dataset import HuggingFaceDataset
 import datasets
 
-def get_data(data, img_size, data_folder, bsize, num_workers, is_multi_gpus, seed, args):
+def get_data(data, img_size, data_folder, bsize, num_workers, 
+             is_multi_gpus, seed, args, drop_last=True):
     """ Class to load data """
 
     if data == "mnist":
@@ -133,7 +134,7 @@ def get_data(data, img_size, data_folder, bsize, num_workers, is_multi_gpus, see
         train_loader = DataLoader(data_train, batch_size=bsize,
                                 shuffle=False if is_multi_gpus else True,
                                 num_workers=num_workers, pin_memory=True,
-                                drop_last=True, sampler=train_sampler)
+                                drop_last=drop_last, sampler=train_sampler)
     else:
         train_loader = None
     if data_test is not None:
@@ -142,7 +143,7 @@ def get_data(data, img_size, data_folder, bsize, num_workers, is_multi_gpus, see
         test_loader = DataLoader(data_test, batch_size=bsize,
                              shuffle=False if is_multi_gpus else True,
                              num_workers=num_workers, pin_memory=True,
-                             drop_last=True, sampler=test_sampler)
+                             drop_last=drop_last, sampler=test_sampler)
     else:
         test_loader = None
     return train_loader, test_loader
