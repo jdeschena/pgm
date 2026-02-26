@@ -1,5 +1,5 @@
 # Partition Generative Models - Masked Modeling Without Masks
-By [Justin Deschenaux](https://jdeschena.github.io), [Lan Tran](https://github.com/tranhuonglan), [Caglar Gulcehre](https://x.com/caglarml?lang=en)
+By [Justin Deschenaux](https://jdeschena.com), [Lan Tran](https://github.com/tranhuonglan), [Caglar Gulcehre](https://x.com/caglarml?lang=en)
 
 
 [![arXiv](https://img.shields.io/badge/arXiv-2505.18883-red.svg)](https://arxiv.org/abs/2505.18883)
