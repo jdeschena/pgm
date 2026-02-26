@@ -2,7 +2,7 @@
 By [Justin Deschenaux](https://jdeschena.github.io), [Lan Tran](https://github.com/tranhuonglan), [Caglar Gulcehre](https://x.com/caglarml?lang=en)
 
 
-[![arXiv](https://img.shields.io/badge/arXiv-2505.18883-red.svg)](https://arxiv.org/abs/2506.10892v1)
+[![arXiv](https://img.shields.io/badge/arXiv-2505.18883-red.svg)](https://arxiv.org/abs/2505.18883)
 [![HuggingFace](https://img.shields.io/badge/🤗-Huggingface-blue)](hhttps://huggingface.co/jdeschena/pgm)
 [![Google Colab - Text](https://img.shields.io/badge/Google%20Colab%20(Text)-F9AB00?logo=googlecolab&logoColor=fff)](https://colab.research.google.com/drive/1dhAh4hJ5s89PcQWlE7PoFxF2WBebM6g1)
 [![Google Colab - Images](https://img.shields.io/badge/Google%20Colab%20(Images)-F9AB00?logo=googlecolab&logoColor=fff)](https://colab.research.google.com/drive/1eRqnK3vasDFqxEq99LqboyoqQyfFI4AC)
